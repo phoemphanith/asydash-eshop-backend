@@ -1,0 +1,54 @@
+**Analyze Database**
+1. Category
+_id: string
+_name: string
+_color: string
+_icon: string
+_image: string
+
+2. Products
+_id: string
+_name: string
+_description: string
+_richDescription: string
+_image: string
+_image: string[]
+_brand: string
+_price: number
+_category: Category
+_countInStock: number
+_rating: number
+_isFeatured: boolean
+_dateCreated: Date
+
+3. Users
+_id: string
+_name: string
+_email: string
+_passwordHash: string
+_street: string
+_apartment: string
+_city: string
+_zip: string
+_country: string
+_phone: string
+_isAdmin: boolean
+
+4. orderItems
+_id: string
+_product: Product
+_quantity: number
+
+5. Orders
+_id: string
+_orderItems: orderItems[]
+_shippingAddress1: string
+_shippingAddress2: string
+_city: string
+_zip: string
+_country: string
+_phone: number
+_status: string
+_totalPrice: number
+_user: User
+_dateOrdered: Date
