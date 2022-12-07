@@ -6,7 +6,7 @@ function authJWT() {
     secret: process.env.TOKEN_SECRET,
     algorithms: ["HS256"],
     isRevoked: async (req, token) => {
-      return !token.payload.isAdmin;
+      return !token.payload;
     },
   }).unless({
     path: [
