@@ -23,6 +23,7 @@ function authJWT() {
         methods: ["GET", "OPTION"],
       },
       `${apiUrl}/users/login`,
+      `${apiUrl}/users/register`,
     ],
   });
 }
