@@ -154,6 +154,32 @@ exports.updateUser = async (req, res) => {
     .catch((err) => res.status(500).json({ success: false, error: err }));
 };
 
+exports.updatePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      message: "User that given by ID was not found",
+    });
+  }
+
+  if (!bcrypt.compareSync(oldPassword, user.passwordHash)) {
+    return res.status(400).json({
+      success: false,
+      message: "Old password that given was wrong",
+    });
+  }
+
+  await User.findByIdAndUpdate(
+    req.params.id,
+    { passwordHash: bcrypt.hashSync(newPassword, 10) },
+    { new: true }
+  );
+
+  res.json({ success: true });
+};
+
 exports.deleteUser = (req, res) => {
   User.findByIdAndRemove(req.params.id)
     .then((user) => {
