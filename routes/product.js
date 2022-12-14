@@ -24,9 +24,9 @@ router.get("/", async (req, res) => {
   res.json({ success: true, result: products });
 });
 
-router.post("/", UploadOption.single("image"), async (req, res) => {
+router.post("/", UploadOption.array("images"), async (req, res) => {
   const category = await Category.findById(req.body.category);
-
+  
   if (!category) {
     return res.status(400).json({
       success: false,
@@ -34,13 +34,26 @@ router.post("/", UploadOption.single("image"), async (req, res) => {
     });
   }
 
+  const images = [];
+
+  if (!req.files) {
+    return res
+      .status(400)
+      .json({ success: false, message: "File upload was invalid" });
+  }
+
+  req.files.map((file) => {
+    images.push(GetFilePath(file));
+  });
+
   const model = new Product({
     name: req.body.name,
     description: req.body.description,
     richDescription: req.body.richDescription,
-    image: GetFilePath(req.file),
+    image: images[0],
     brand: req.body.brand,
     price: req.body.price,
+    images: images,
     category: req.body.category,
     countInStock: req.body.countInStock,
     isFeatured: req.body.isFeatured,
@@ -131,7 +144,7 @@ router.get("/:id", async (req, res) => {
   });
 });
 
-router.put("/:id", UploadOption.single("image"), async (req, res) => {
+router.put("/:id", UploadOption.array("images"), async (req, res) => {
   const category = await Category.findById(req.body.category);
   const product = await Product.findById(req.params.id);
 
@@ -142,11 +155,10 @@ router.put("/:id", UploadOption.single("image"), async (req, res) => {
     });
   }
 
-  let newImagePath;
-  if (req.file) {
-    newImagePath = GetFilePath(req.file);
+  if (req.files) {
+    newImagePath = req.files.map((file) => GetFilePath(file));
   } else {
-    newImagePath = product.image;
+    newImagePath = product.images;
   }
 
   const productUpdate = await Product.findByIdAndUpdate(
@@ -155,7 +167,8 @@ router.put("/:id", UploadOption.single("image"), async (req, res) => {
       name: req.body.name,
       description: req.body.description,
       richDescription: req.body.richDescription,
-      image: newImagePath,
+      image: newImagePath[0],
+      images: newImagePath,
       brand: req.body.brand,
       price: req.body.price,
       category: req.body.category,
