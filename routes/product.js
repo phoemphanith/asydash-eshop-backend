@@ -24,6 +24,16 @@ router.get("/", async (req, res) => {
   res.json({ success: true, result: products });
 });
 
+router.get('/search', async (req, res) => {
+  if (!req.query.name) {
+    return res.json({success: true, result: []});
+  }
+
+  const products = await Product.find({ name: new RegExp(req.query.name , "i") }).sort({ name: 'asc' });
+  
+  res.json({ success: true, result: products });
+});
+
 router.post("/", UploadOption.array("images"), async (req, res) => {
   const category = await Category.findById(req.body.category);
   
