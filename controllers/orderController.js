@@ -26,6 +26,10 @@ exports.countTotalSale = async (req, res) => {
       .json({ success: false, message: "Get total sales is failed" });
   }
 
+  if (totalSales.length <= 0) {
+    return res.json({ success: true, result: { totalSales: 0 } });
+  }
+
   res.json({
     success: true,
     result: { totalSales: totalSales.pop().totalSales },
